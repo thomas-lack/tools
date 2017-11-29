@@ -1,0 +1,45 @@
+#!/bin/bash
+FOLDER_COMPARATOR=""
+TARGET_DIR="."
+
+while [[ $# -gt 0 ]]; do
+	key="$1"
+	case "$key" in
+		# print list of arguments
+		-h|--help)
+		echo "Arguments:"
+		echo "-c | --compare <Substring>        Folder name matcher"
+		echo "-d | --destination <Substring>    Target folder (optional)"
+		echo ""
+		exit 0
+		;;
+		# set folder name comparison substring
+		-c|--compare)
+		shift
+		FOLDER_COMPARATOR="$1"
+		;;
+		# set destination folder
+		-d|--destination)
+		shift
+		TARGET_DIR="$1"
+		;;
+		# extra options not available
+		*)
+		echo "Unknown option '$key'"
+		;;
+	esac
+	# shift after checking all the cases to the next option
+	shift
+done
+
+if [[ $FOLDER_COMPARATOR == "" ]]; then
+	echo "ERROR: No folder comparator given, use -c or --compare"
+	exit 1
+fi
+
+for dir in ./*/
+do
+	if [[ $dir == *"$FOLDER_COMPARATOR"* ]]; then
+		unzip -u "$dir/*.zip" -d "$TARGET_DIR"
+	fi
+done
